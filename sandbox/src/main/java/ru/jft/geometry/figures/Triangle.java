@@ -59,16 +59,26 @@ public class Triangle {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Triangle triangle = (Triangle) o;
+
         boolean condition1 = Double.compare(side1, triangle.side1) == 0
-                || Double.compare(side1, triangle.side2) == 0
-                || Double.compare(side1, triangle.side3) == 0;
-        boolean condition2 = Double.compare(side2, triangle.side2) == 0
-                || Double.compare(side2, triangle.side1) == 0
-                || Double.compare(side2, triangle.side3) == 0;
-        boolean condition3 = Double.compare(side3, triangle.side3) == 0
-                || Double.compare(side3, triangle.side1) == 0
-                || Double.compare(side3, triangle.side2) == 0;
-        return condition1 && condition2 && condition3;
+                && Double.compare(side2, triangle.side2) == 0
+                && Double.compare(side3, triangle.side3) == 0;
+        boolean condition2 = Double.compare(side1, triangle.side2) == 0
+                && Double.compare(side2, triangle.side3) == 0
+                && Double.compare(side3, triangle.side1) == 0;
+        boolean condition3 = Double.compare(side1, triangle.side3) == 0
+                && Double.compare(side3, triangle.side2) == 0
+                && Double.compare(side2, triangle.side1) == 0;
+        boolean condition4 = Double.compare(side1, triangle.side1) == 0
+                && Double.compare(side3, triangle.side2) == 0
+                && Double.compare(side2, triangle.side3) == 0;
+        boolean condition5 = Double.compare(side2, triangle.side2) == 0
+                && Double.compare(side3, triangle.side1) == 0
+                && Double.compare(side1, triangle.side3) == 0;
+        boolean condition6 = Double.compare(side3, triangle.side3) == 0
+                && Double.compare(side1, triangle.side2) == 0
+                && Double.compare(side2, triangle.side1) == 0;
+        return condition1 || condition2 || condition3 || condition4 || condition5 || condition6;
     }
 
     @Override

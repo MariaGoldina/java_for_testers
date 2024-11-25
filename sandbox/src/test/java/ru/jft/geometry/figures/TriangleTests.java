@@ -71,15 +71,15 @@ public class TriangleTests {
     @Test
     void TestEqualsTriangles () {
         var t1 = new Triangle(3, 4, 5);
-        var t2 = new Triangle(5, 3, 4);
+        var t2 = new Triangle(4, 5, 3);
         Assertions.assertEquals(t1, t2);
 
     }
 
     @Test
     void TestNotEqualsTriangles () {
-        var t1 = new Triangle(1, 4, 4);
-        var t2 = new Triangle(5, 3, 4);
+        var t1 = new Triangle(4, 4, 3);
+        var t2 = new Triangle(4, 4, 4);
         Assertions.assertNotEquals(t1, t2);
 
     }
