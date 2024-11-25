@@ -17,10 +17,10 @@ public class Figures {
 //        triangle3.showPerimetr();
 //        triangle3.showArea();
 
-        Triangle triangle4 = new Triangle(-11.0,15.0,18.0);
-        triangle4.showInfo();
+//        Triangle triangle4 = new Triangle(-11.0,15.0,18.0);
+//        triangle4.showInfo();
 
-        Triangle triangle5 = new Triangle(1, 2, 4);
+        Triangle triangle5 = new Triangle(1, 2, 3);
         triangle5.showInfo();
     }
 }
