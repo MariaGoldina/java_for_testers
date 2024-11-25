@@ -8,6 +8,17 @@ public class Triangle {
     private double side3;
 
     public Triangle(double side1, double side2, double side3) {
+        if (side1 < 0 || side2 < 0 || side3 < 0) {
+            throw new IllegalArgumentException("Triangle side should not be negative");
+        }
+
+        boolean condition1 = (side1 + side2)<side3 || (side1 + side3)<side2 || (side2 + side3)<side1;
+        boolean condition2 = (side1 + side2)==side3 || (side1 + side3)==side2 || (side2 + side3)==side1;
+        if (condition1 || condition2) {
+            throw new IllegalArgumentException(
+                    "The sum of any two sides of triangle should be less than the third side");
+        }
+
         this.side1 = side1;
         this.side2 = side2;
         this.side3 = side3;

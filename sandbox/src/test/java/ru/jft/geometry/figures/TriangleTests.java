@@ -27,4 +27,44 @@ public class TriangleTests {
         double result3 = new Triangle(11.0, 15.0, 18.0).getArea();
         Assertions.assertEquals(82.3164625090267, result3);
     }
+
+    @Test
+    void cannotCreateTriangleWithNegativeSide1 () {
+        try {
+            new Triangle(-1, 2, 3);
+            Assertions.fail();
+        } catch (IllegalArgumentException e) {
+            //Test passed
+        }
+    }
+
+    @Test
+    void cannotCreateTriangleWithNegativeSide2 () {
+        try {
+            new Triangle(1, -2, 3);
+            Assertions.fail();
+        } catch (IllegalArgumentException e) {
+            //Test passed
+        }
+    }
+
+    @Test
+    void cannotCreateTriangleWithNegativeSide3 () {
+        try {
+            new Triangle(1, 2, -3);
+            Assertions.fail();
+        } catch (IllegalArgumentException e) {
+            //Test passed
+        }
+    }
+
+    @Test
+    void cannotCreateTriangleWithoutTriangleInequality () {
+        try {
+            new Triangle(1, 2, 3);
+            Assertions.fail();
+        } catch (IllegalArgumentException e) {
+            //Test passed
+        }
+    }
 }
