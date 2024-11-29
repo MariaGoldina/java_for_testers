@@ -32,10 +32,10 @@ public class GroupCreationTests {
 
     @Test
     public void CanCreateGroup() {
-        if (!isElementPresent(By.name("group_name"))) {
+        if (!isElementPresent(By.name("new"))) {
             driver.findElement(By.linkText("groups")).click();
         }
-        driver.findElement(By.xpath("//input[@name=\'new\']")).click();
+        driver.findElement(By.name("new")).click();
         driver.findElement(By.name("group_name")).sendKeys("new group");
         driver.findElement(By.name("group_header")).sendKeys("group header");
         driver.findElement(By.name("group_footer")).sendKeys("group footer");
@@ -45,10 +45,10 @@ public class GroupCreationTests {
 
     @Test
     public void CanCreateGroupWithEmptyName() {
-        if (!isElementPresent(By.name("group_name"))) {
+        if (!isElementPresent(By.name("new"))) {
             driver.findElement(By.linkText("groups")).click();
         }
-        driver.findElement(By.xpath("//input[@name=\'new\']")).click();
+        driver.findElement(By.name("new")).click();
         driver.findElement(By.name("group_name")).sendKeys("");
         driver.findElement(By.name("group_header")).sendKeys("");
         driver.findElement(By.name("group_footer")).sendKeys("");
@@ -58,10 +58,10 @@ public class GroupCreationTests {
 
     @Test
     public void CanCreateGroupWithNumbers() {
-        if (!isElementPresent(By.name("group_name"))) {
+        if (!isElementPresent(By.name("new"))) {
             driver.findElement(By.linkText("groups")).click();
         }
-        driver.findElement(By.xpath("//input[@name=\'new\']")).click();
+        driver.findElement(By.name("new")).click();
         driver.findElement(By.name("group_name")).sendKeys("12345");
         driver.findElement(By.name("group_header")).sendKeys("12345");
         driver.findElement(By.name("group_footer")).sendKeys("12345");
