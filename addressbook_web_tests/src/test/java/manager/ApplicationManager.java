@@ -1,16 +1,16 @@
+package manager;
+
 import model.GroupData;
-import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-public class TestBase {
+public class ApplicationManager {
     protected static WebDriver driver;
 
-    @BeforeEach
-    public void setUp() {
+    public void init() {
         if (driver == null) {
             driver = new ChromeDriver();
             Runtime.getRuntime().addShutdownHook(new Thread(driver::quit));
@@ -22,7 +22,7 @@ public class TestBase {
         }
     }
 
-    protected boolean isElementPresent(By locator) {
+    public boolean isElementPresent(By locator) {
         try {
             driver.findElement(locator);
             return true;
@@ -31,7 +31,7 @@ public class TestBase {
         }
     }
 
-    protected void createGroup(GroupData group) {
+    public void createGroup(GroupData group) {
         driver.findElement(By.name("new")).click();
         driver.findElement(By.name("group_name")).sendKeys(group.name());
         driver.findElement(By.name("group_header")).sendKeys(group.header());
@@ -40,22 +40,22 @@ public class TestBase {
         driver.findElement(By.linkText("group page")).click();
     }
 
-    protected void openGroupsPage() {
+    public void openGroupsPage() {
         if (!isElementPresent(By.name("new"))) {
             driver.findElement(By.linkText("groups")).click();
         }
     }
 
-    protected void removeGroups() {
+    public boolean isGroupPresent(By locator) {
+        return isElementPresent(locator);
+    }
+
+    public void removeGroups() {
         driver.findElement(By.name("delete")).click();
         driver.findElement(By.linkText("group page")).click();
     }
 
-    protected void selectGroup(By locator) {
+    public void selectGroup(By locator) {
         driver.findElement(locator).click();
-    }
-
-    protected boolean isGroupPresent(By locator) {
-        return isElementPresent(locator);
     }
 }
