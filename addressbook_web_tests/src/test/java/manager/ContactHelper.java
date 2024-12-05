@@ -10,14 +10,14 @@ public class ContactHelper extends HelperBase {
     }
 
     public void openHomePage() {
-        if (!manager.contacts.isElementPresent(By.name("add"))) {
+        if (!manager.contacts().isElementPresent(By.name("add"))) {
             openPage(By.linkText("home"));
         }
     }
 
     public boolean isContactPresent(By locator) {
         openHomePage();
-        return manager.contacts.isElementPresent(locator);
+        return manager.contacts().isElementPresent(locator);
     }
 
     public void createContact(ContactData contact) {
@@ -32,8 +32,22 @@ public class ContactHelper extends HelperBase {
         click(locator);
     }
 
+    public void removeContacts() {
+        openHomePage();
+        initContactRemove();
+        openHomePage();
+    }
+
+    public void closeDeleteAllert() {
+        closeAllert();
+    }
+
     private void initContactCreation() {
         click(By.linkText("add new"));
+    }
+
+    private void initContactRemove() {
+        click(By.xpath("//div[2]/input"));
     }
 
     private void submitContactCreation() {

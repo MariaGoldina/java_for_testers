@@ -7,9 +7,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 public class ApplicationManager {
     protected WebDriver driver;
     private LoginHelper session;
-    GroupHelper groups;
-
-    ContactHelper contacts;
+    private GroupHelper groups;
+    private ContactHelper contacts;
 
     public void init() {
         if (driver == null) {

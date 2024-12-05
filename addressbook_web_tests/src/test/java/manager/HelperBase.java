@@ -32,4 +32,8 @@ public class HelperBase {
         manager.driver.findElement(locator).clear();
         manager.driver.findElement(locator).sendKeys(text);
     }
+
+    protected void closeAllert() {
+        manager.driver.switchTo().alert().accept();
+    }
 }

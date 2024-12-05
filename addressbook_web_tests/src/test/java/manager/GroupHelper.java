@@ -10,14 +10,14 @@ public class GroupHelper extends HelperBase {
     }
 
     public void openGroupsPage() {
-        if (!manager.groups.isElementPresent(By.name("new"))) {
+        if (!manager.groups().isElementPresent(By.name("new"))) {
             openPage(By.linkText("groups"));
         }
     }
 
     public boolean isGroupPresent(By locator) {
         openGroupsPage();
-        return manager.groups.isElementPresent(locator);
+        return manager.groups().isElementPresent(locator);
     }
 
     public void createGroup(GroupData group) {

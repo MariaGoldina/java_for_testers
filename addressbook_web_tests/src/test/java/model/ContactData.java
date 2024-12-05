@@ -1,6 +1,6 @@
 package model;
 
-public record ContactData (
+public record ContactData(
         String firstName, String lastName, String middleName, String address, String email, String mobile
 ) {
     public ContactData() {
