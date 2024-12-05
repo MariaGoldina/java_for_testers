@@ -9,6 +9,8 @@ public class ApplicationManager {
     private LoginHelper session;
     GroupHelper groups;
 
+    ContactHelper contacts;
+
     public void init() {
         if (driver == null) {
             driver = new ChromeDriver();
@@ -31,5 +33,12 @@ public class ApplicationManager {
             groups = new GroupHelper(this);
         }
         return groups;
+    }
+
+    public ContactHelper contacts() {
+        if (contacts == null) {
+            contacts = new ContactHelper(this);
+        }
+        return contacts;
     }
 }
