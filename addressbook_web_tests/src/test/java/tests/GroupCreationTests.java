@@ -12,10 +12,12 @@ public class GroupCreationTests extends TestBase {
 
     public static List<GroupData> groupProvider() {
         var result = new ArrayList<>(List.of(
-                new GroupData("12345", "12345", "12345"),
-                new GroupData("group name1", "header2", "footer3"),
-                new GroupData("group name.,/-+;:?\"@#!$%^&*()_=", "header.,/-+;:?\"@#!$%^&*()_=",
-                        "footer.,/-+;:?\"@#!$%^&*()_=")
+                new GroupData(randomStringWithNumbers(1000), randomStringWithNumbers(1000), randomStringWithNumbers(1000)),
+                new GroupData("name"+randomStringWithNumbers(1000),
+                        "header"+randomStringWithNumbers(1000),
+                        "footer"+randomStringWithNumbers(1000)),
+                new GroupData("name .,/-+;:?\"@#!$%^&*()_=", "header .,/-+;:?\"@#!$%^&*()_=",
+                        "footer .,/-+;:?\"@#!$%^&*()_=")
         ));
         for (var name : List.of("", "group name")) {
             for (var header : List.of("", "group header")) {

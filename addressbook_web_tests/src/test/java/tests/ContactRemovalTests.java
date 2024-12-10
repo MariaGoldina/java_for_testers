@@ -10,7 +10,7 @@ public class ContactRemovalTests extends TestBase {
 
     @Test
     public void canRemoveContact() {
-        if (!app.contacts().isContactPresent(By.name("selected[]"))) {
+        if (app.contacts().getContactCount() == 0) {
             app.contacts().createContact(new ContactData(
                     "firstname", "lastname", "middlename",
                     "address", "email", "mobilephone"));
@@ -21,10 +21,8 @@ public class ContactRemovalTests extends TestBase {
 
     @Test
     public void canRemoveSeveralContacts() {
-        if (!app.contacts().isContactPresent(By.name("selected[]"))) {
+        if (app.contacts().getContactCount() < 2) {
             app.contacts().createContact(new ContactData().withFirstName("1"));
-        }
-        if (!app.contacts().isContactPresent(By.xpath("(//input[@name=\'selected[]\'])[2]"))) {
             app.contacts().createContact(new ContactData().withFirstName("2"));
         }
         app.contacts().selectContact(By.name("selected[]"));
@@ -44,7 +42,7 @@ public class ContactRemovalTests extends TestBase {
 
     @Test
     public void canRemoveAllContacts() {
-        if (!app.contacts().isContactPresent(By.name("selected[]"))) {
+        if (app.contacts().getContactCount() == 0) {
             app.contacts().createContact(new ContactData().withFirstName("1"));
         }
         app.contacts().selectContact(By.id("MassCB"));

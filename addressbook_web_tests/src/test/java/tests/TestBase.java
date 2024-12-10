@@ -24,4 +24,10 @@ public class TestBase {
         }
         return result;
     }
+
+    public static String randomStringWithNumbers(int n) {
+        var rnd = new Random();
+        var result = "" + rnd.nextInt(n);
+        return result;
+    }
 }
