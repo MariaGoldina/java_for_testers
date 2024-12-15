@@ -3,11 +3,19 @@ package manager;
 import model.GroupData;
 import org.openqa.selenium.By;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class GroupHelper extends HelperBase {
 
     public GroupHelper(ApplicationManager manager) {
         super(manager);
     }
+
+    public Comparator<GroupData> compareById = (o1, o2) -> {
+        return Integer.compare(Integer.parseInt(o1.id()), Integer.parseInt(o2.id()));
+    };
 
     public void openGroupsPage() {
         if (!manager.groups().isElementPresent(By.name("new"))) {
@@ -23,9 +31,9 @@ public class GroupHelper extends HelperBase {
         returnToGroupsPage();
     }
 
-    public void selectGroup(By locator) {
+    public void selectGroup(GroupData group) {
         openGroupsPage();
-        click(locator);
+        click(By.cssSelector(String.format("input[value='%s']", group.id())));
     }
 
     private void selectAllGroups() {
@@ -46,9 +54,9 @@ public class GroupHelper extends HelperBase {
         removeGroups();
     }
 
-    public void modifyGroup(GroupData modifiedGroup) {
+    public void modifyGroup(GroupData group, GroupData modifiedGroup) {
         openGroupsPage();
-        selectGroup(By.name("selected[]"));
+        selectGroup(group);
         initGroupModification();
         fillGroupForm(modifiedGroup);
         submitGroupModification();
@@ -88,5 +96,18 @@ public class GroupHelper extends HelperBase {
     public int getGroupsCount() {
         openGroupsPage();
         return manager.driver.findElements(By.name("selected[]")).size();
+    }
+
+    public List<GroupData> getList() {
+        openGroupsPage();
+        var groups = new ArrayList<GroupData>();
+        var spans = manager.driver.findElements(By.cssSelector("span.group"));
+        for (var span : spans) {
+            var name = span.getText();
+            var checkbox = span.findElement(By.name("selected[]"));
+            var id = checkbox.getAttribute("value");
+            groups.add(new GroupData().withId(id).withName(name));
+        }
+        return groups;
     }
 }

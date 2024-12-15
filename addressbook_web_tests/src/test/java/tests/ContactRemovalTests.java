@@ -12,7 +12,7 @@ public class ContactRemovalTests extends TestBase {
     public void canRemoveContact() {
         if (app.contacts().getContactCount() == 0) {
             app.contacts().createContact(new ContactData(
-                    "firstname", "lastname", "middlename",
+                    "", "firstname", "lastname", "middlename",
                     "address", "email", "mobilephone"));
         }
         app.contacts().selectContact(By.name("selected[]"));

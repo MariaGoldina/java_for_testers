@@ -12,17 +12,17 @@ public class ContactCreationTests extends TestBase {
 
     public static List<ContactData> contactProvider() {
         var result = new ArrayList<>(List.of(
-                new ContactData(randomStringWithNumbers(1000), randomStringWithNumbers(1000), randomStringWithNumbers(1000),
+                new ContactData("", randomStringWithNumbers(1000), randomStringWithNumbers(1000), randomStringWithNumbers(1000),
                         randomStringWithNumbers(1000), randomStringWithNumbers(1000), randomStringWithNumbers(1000)
                 ),
-                new ContactData("firstname" + randomStringWithNumbers(1000),
+                new ContactData("", "firstname" + randomStringWithNumbers(1000),
                         "lastname" + randomStringWithNumbers(1000),
                         "middlename" + randomStringWithNumbers(1000),
                         "address" + randomStringWithNumbers(1000),
                         "email" + randomStringWithNumbers(1000),
                         "mobile" + randomStringWithNumbers(1000)
                 ),
-                new ContactData("first name.,/-+;:?\"@#!$%^&*()_=",
+                new ContactData("", "first name.,/-+;:?\"@#!$%^&*()_=",
                         "last name.,/-+;:?\"@#!$%^&*()_=",
                         "middle name.,/-+;:?\"@#!$%^&*()_=",
                         "address .,/-+;:?\"@#!$%^&*()_=",
@@ -40,15 +40,25 @@ public class ContactCreationTests extends TestBase {
         for (var address : List.of("", "address")) {
             for (var email : List.of("", "email")) {
                 for (var mobile : List.of("", "mobile")) {
-                    result.add(new ContactData("firstname", "lastname", "middlename",
-                            address, email, mobile));
+                    result.add(new ContactData()
+                                    .withFirstName("firstname")
+                                    .withLastName("lastname")
+                                    .withMiddleName("middlename")
+                                    .withAddress(address)
+                                    .withEmail(email)
+                                    .withMobilePhone(mobile));
                 }
             }
         }
 
         for (int i = 0; i < 5; i++) {
-            result.add(new ContactData(randomString(i * 10), randomString(i * 10), randomString(i * 10),
-                    randomString(i * 10), randomString(i * 10), randomString(i * 10)));
+            result.add(new ContactData()
+                    .withFirstName(randomString(i * 10))
+                    .withLastName(randomString(i * 10))
+                    .withMiddleName(randomString(i * 10))
+                    .withAddress(randomString(i * 10))
+                    .withEmail(randomString(i * 10))
+                    .withMobilePhone(randomString(i * 10)));
         }
         return result;
     }
