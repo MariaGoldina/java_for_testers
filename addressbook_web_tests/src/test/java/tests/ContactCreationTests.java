@@ -41,12 +41,12 @@ public class ContactCreationTests extends TestBase {
             for (var email : List.of("", "email")) {
                 for (var mobile : List.of("", "mobile")) {
                     result.add(new ContactData()
-                                    .withFirstName("firstname")
-                                    .withLastName("lastname")
-                                    .withMiddleName("middlename")
-                                    .withAddress(address)
-                                    .withEmail(email)
-                                    .withMobilePhone(mobile));
+                            .withFirstName("firstname")
+                            .withLastName("lastname")
+                            .withMiddleName("middlename")
+                            .withAddress(address)
+                            .withEmail(email)
+                            .withMobilePhone(mobile));
                 }
             }
         }
@@ -78,18 +78,26 @@ public class ContactCreationTests extends TestBase {
     @ParameterizedTest
     @MethodSource("contactProvider")
     public void canCreateContact(ContactData contact) {
-        int contactCount = app.contacts().getContactCount();
+        var oldContacts = app.contacts().getContactList();
         app.contacts().createContact(contact);
-        int newContactCount = app.contacts().getContactCount();
-        Assertions.assertEquals(contactCount + 1, newContactCount);
+        var newContacts = app.contacts().getContactList();
+        newContacts.sort(app.contacts().compareById);
+        var expectedContacts = new ArrayList<>(oldContacts);
+        expectedContacts.add(contact.withId(newContacts.get(newContacts.size() - 1).id())
+                .withMiddleName("")
+                .withAddress("")
+                .withEmail("")
+                .withMobilePhone(""));
+        expectedContacts.sort(app.contacts().compareById);
+        Assertions.assertEquals(newContacts, expectedContacts);
     }
 
     @ParameterizedTest
     @MethodSource("negativeContactProvider")
     public void cannotCreateContact(ContactData contact) {
-        int contactCount = app.contacts().getContactCount();
+        var oldContacts = app.contacts().getContactList();
         app.contacts().createContact(contact);
-        int newContactCount = app.contacts().getContactCount();
-        Assertions.assertEquals(contactCount, newContactCount);
+        var newContacts = app.contacts().getContactList();
+        Assertions.assertEquals(newContacts, oldContacts);
     }
 }

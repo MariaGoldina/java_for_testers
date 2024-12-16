@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.UnhandledAlertException;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class ContactRemovalTests extends TestBase {
 
     @Test
@@ -15,8 +18,14 @@ public class ContactRemovalTests extends TestBase {
                     "", "firstname", "lastname", "middlename",
                     "address", "email", "mobilephone"));
         }
-        app.contacts().selectContact(By.name("selected[]"));
+        var oldContacts = app.contacts().getContactList();
+        var index = new Random().nextInt(oldContacts.size());
+        app.contacts().selectContact(oldContacts.get(index));
         app.contacts().removeContacts();
+        var newContacts = app.contacts().getContactList();
+        var expectedContacts = new ArrayList<>(oldContacts);
+        expectedContacts.remove(index);
+        Assertions.assertEquals(newContacts, expectedContacts);
     }
 
     @Test
@@ -25,9 +34,15 @@ public class ContactRemovalTests extends TestBase {
             app.contacts().createContact(new ContactData().withFirstName("1"));
             app.contacts().createContact(new ContactData().withFirstName("2"));
         }
-        app.contacts().selectContact(By.name("selected[]"));
-        app.contacts().selectContact(By.xpath("(//input[@name=\'selected[]\'])[2]"));
+        var oldContacts = app.contacts().getContactList();
+        app.contacts().selectContact(oldContacts.get(0));
+        app.contacts().selectContact(oldContacts.get(1));
         app.contacts().removeContacts();
+        var newContacts = app.contacts().getContactList();
+        var expectedContacts = new ArrayList<>(oldContacts);
+        expectedContacts.remove(0);
+        expectedContacts.remove(0);
+        Assertions.assertEquals(newContacts, expectedContacts);
     }
 
     @Test
@@ -45,7 +60,8 @@ public class ContactRemovalTests extends TestBase {
         if (app.contacts().getContactCount() == 0) {
             app.contacts().createContact(new ContactData().withFirstName("1"));
         }
-        app.contacts().selectContact(By.id("MassCB"));
+        app.contacts().selectCheckbox(By.id("MassCB"));
         app.contacts().removeContacts();
+        Assertions.assertEquals(0, app.contacts().getContactCount());
     }
 }
