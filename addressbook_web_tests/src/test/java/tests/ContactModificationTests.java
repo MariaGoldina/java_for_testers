@@ -13,7 +13,7 @@ public class ContactModificationTests extends TestBase {
         if (app.contacts().getContactCount() == 0) {
             app.contacts().createContact(new ContactData(
                     "", "firstname", "lastname", "middlename",
-                    "address", "email", "mobilephone"));
+                    "address", "email", "mobilephone", ""));
         }
         var oldContacts = app.contacts().getContactList();
         var index = new Random().nextInt(oldContacts.size());
@@ -33,7 +33,7 @@ public class ContactModificationTests extends TestBase {
         if (app.contacts().getContactCount() == 0) {
             app.contacts().createContact(new ContactData(
                     "", "firstname", "lastname", "middlename",
-                    "address", "email", "mobilephone"));
+                    "address", "email", "mobilephone", ""));
         }
         var oldContacts = app.contacts().getContactList();
         var index = new Random().nextInt(oldContacts.size());

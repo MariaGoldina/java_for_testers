@@ -1,7 +1,6 @@
 package manager;
 
 import model.ContactData;
-import model.GroupData;
 import org.openqa.selenium.By;
 
 import java.util.ArrayList;
@@ -26,7 +25,11 @@ public class ContactHelper extends HelperBase {
 
     public void createContact(ContactData contact) {
         initContactCreation();
-        fillContactForm(contact);
+        if (!contact.photo().isEmpty()) {
+            fillContactFormWithPhoto(contact);
+        } else {
+            fillContactForm(contact);
+        }
         submitContactCreation();
         returnToHomePage();
     }
@@ -87,6 +90,16 @@ public class ContactHelper extends HelperBase {
         typeText(By.name("address"), contact.address());
         typeText(By.name("email"), contact.email());
         typeText(By.name("mobile"), contact.mobile());
+    }
+
+    private void fillContactFormWithPhoto(ContactData contact) {
+        typeText(By.name("firstname"), contact.firstName());
+        typeText(By.name("lastname"), contact.lastName());
+        typeText(By.name("middlename"), contact.middleName());
+        typeText(By.name("address"), contact.address());
+        typeText(By.name("email"), contact.email());
+        typeText(By.name("mobile"), contact.mobile());
+        attach(By.name("photo"), contact.photo());
     }
 
     private void returnToHomePage() {

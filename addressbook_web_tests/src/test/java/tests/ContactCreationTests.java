@@ -1,7 +1,9 @@
 package tests;
 
+import common.CommonFunctions;
 import model.ContactData;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -12,23 +14,23 @@ public class ContactCreationTests extends TestBase {
 
     public static List<ContactData> contactProvider() {
         var result = new ArrayList<>(List.of(
-                new ContactData("", randomStringWithNumbers(1000), randomStringWithNumbers(1000), randomStringWithNumbers(1000),
-                        randomStringWithNumbers(1000), randomStringWithNumbers(1000), randomStringWithNumbers(1000)
-                ),
-                new ContactData("", "firstname" + randomStringWithNumbers(1000),
-                        "lastname" + randomStringWithNumbers(1000),
-                        "middlename" + randomStringWithNumbers(1000),
-                        "address" + randomStringWithNumbers(1000),
-                        "email" + randomStringWithNumbers(1000),
-                        "mobile" + randomStringWithNumbers(1000)
-                ),
+                new ContactData("", CommonFunctions.randomStringWithNumbers(1000), CommonFunctions.randomStringWithNumbers(1000), CommonFunctions.randomStringWithNumbers(1000),
+                        CommonFunctions.randomStringWithNumbers(1000), CommonFunctions.randomStringWithNumbers(1000), CommonFunctions.randomStringWithNumbers(1000),
+                        ""),
+                new ContactData("", "firstname" + CommonFunctions.randomStringWithNumbers(1000),
+                        "lastname" + CommonFunctions.randomStringWithNumbers(1000),
+                        "middlename" + CommonFunctions.randomStringWithNumbers(1000),
+                        "address" + CommonFunctions.randomStringWithNumbers(1000),
+                        "email" + CommonFunctions.randomStringWithNumbers(1000),
+                        "mobile" + CommonFunctions.randomStringWithNumbers(1000),
+                        ""),
                 new ContactData("", "first name.,/-+;:?\"@#!$%^&*()_=",
                         "last name.,/-+;:?\"@#!$%^&*()_=",
                         "middle name.,/-+;:?\"@#!$%^&*()_=",
                         "address .,/-+;:?\"@#!$%^&*()_=",
                         "email .,/-+;:?\"@#!$%^&*()_=",
-                        "mobile .,/-+;:?\"@#!$%^&*()_="
-                ),
+                        "mobile .,/-+;:?\"@#!$%^&*()_=",
+                        ""),
                 new ContactData().withFirstName("firstname"),
                 new ContactData().withLastName("lastname"),
                 new ContactData().withMiddleName("middlename"),
@@ -53,12 +55,12 @@ public class ContactCreationTests extends TestBase {
 
         for (int i = 0; i < 5; i++) {
             result.add(new ContactData()
-                    .withFirstName(randomString(i * 10))
-                    .withLastName(randomString(i * 10))
-                    .withMiddleName(randomString(i * 10))
-                    .withAddress(randomString(i * 10))
-                    .withEmail(randomString(i * 10))
-                    .withMobilePhone(randomString(i * 10)));
+                    .withFirstName(CommonFunctions.randomString(i * 10))
+                    .withLastName(CommonFunctions.randomString(i * 10))
+                    .withMiddleName(CommonFunctions.randomString(i * 10))
+                    .withAddress(CommonFunctions.randomString(i * 10))
+                    .withEmail(CommonFunctions.randomString(i * 10))
+                    .withMobilePhone(CommonFunctions.randomString(i * 10)));
         }
         return result;
     }
@@ -99,5 +101,18 @@ public class ContactCreationTests extends TestBase {
         app.contacts().createContact(contact);
         var newContacts = app.contacts().getContactList();
         Assertions.assertEquals(newContacts, oldContacts);
+    }
+
+    @Test
+    public void canCreateContactWithPhoto() {
+        var contact = new ContactData()
+                .withFirstName("contact1")
+                .withLastName("withPhoto")
+                .withMiddleName("")
+                .withAddress("")
+                .withEmail("")
+                .withMobilePhone("")
+                .withPhoto(CommonFunctions.randomFile("src/test/resources/images"));
+        app.contacts().createContact(contact);
     }
 }

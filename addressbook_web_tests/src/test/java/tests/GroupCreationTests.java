@@ -1,37 +1,55 @@
 package tests;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import common.CommonFunctions;
 import model.GroupData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GroupCreationTests extends TestBase {
 
-    public static List<GroupData> groupProvider() {
+    public static List<GroupData> groupProvider() throws IOException {
         var result = new ArrayList<>(List.of(
-                new GroupData("", randomStringWithNumbers(1000), randomStringWithNumbers(1000), randomStringWithNumbers(1000)),
-                new GroupData("", "name"+randomStringWithNumbers(1000),
-                        "header"+randomStringWithNumbers(1000),
-                        "footer"+randomStringWithNumbers(1000)),
+                new GroupData("", CommonFunctions.randomStringWithNumbers(1000), CommonFunctions.randomStringWithNumbers(1000), CommonFunctions.randomStringWithNumbers(1000)),
+                new GroupData("", "name" + CommonFunctions.randomStringWithNumbers(1000),
+                        "header" + CommonFunctions.randomStringWithNumbers(1000),
+                        "footer" + CommonFunctions.randomStringWithNumbers(1000)),
                 new GroupData("", "name .,/-+;:?\"@#!$%^&*()_=", "header .,/-+;:?\"@#!$%^&*()_=",
                         "footer .,/-+;:?\"@#!$%^&*()_=")
         ));
-        for (var name : List.of("", "group name")) {
-            for (var header : List.of("", "group header")) {
-                for (var footer : List.of("", "group footer")) {
-                    result.add(new GroupData().withName(name).withHeader(header).withFooter(footer));
-                }
+//        for (var name : List.of("", "group name")) {
+//            for (var header : List.of("", "group header")) {
+//                for (var footer : List.of("", "group footer")) {
+//                    result.add(new GroupData().withName(name).withHeader(header).withFooter(footer));
+//                }
+//            }
+//        }
+        var json = "";
+        try (var reader = new FileReader("groups.json");
+             var breader = new BufferedReader(reader)
+        ) {
+            var line = breader.readLine();
+            while (line != null) {
+                json = json + line;
+                line = breader.readLine();
             }
         }
-        for (int i = 1; i < 5; i++) {
-            result.add(new GroupData()
-                    .withName(randomString(i * 10))
-                    .withHeader(randomString(i * 10))
-                    .withFooter(randomString(i * 10)));
-        }
+//        var json = Files.readString(Paths.get("groups.json"));
+        ObjectMapper mapper = new ObjectMapper();
+        var value = mapper.readValue(json, new TypeReference<List<GroupData>>() {
+        });
+        result.addAll(value);
         return result;
     }
 
@@ -52,7 +70,7 @@ public class GroupCreationTests extends TestBase {
         var newGroups = app.groups().getList();
         newGroups.sort(app.groups().compareById);
         var expectedGroups = new ArrayList<>(oldGroups);
-        expectedGroups.add(group.withId(newGroups.get(newGroups.size()-1).id()).withHeader("").withFooter(""));
+        expectedGroups.add(group.withId(newGroups.get(newGroups.size() - 1).id()).withHeader("").withFooter(""));
         expectedGroups.sort(app.groups().compareById);
         Assertions.assertEquals(newGroups, expectedGroups);
     }
