@@ -2,6 +2,8 @@ package tests;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import common.CommonFunctions;
 import model.GroupData;
 import org.junit.jupiter.api.Assertions;
@@ -49,6 +51,12 @@ public class GroupCreationTests extends TestBase {
         ObjectMapper mapper = new ObjectMapper();
         var value = mapper.readValue(json, new TypeReference<List<GroupData>>() {
         });
+//        var mapper = new YAMLMapper();
+//        var value = mapper.readValue(new File("groups.yaml"), new TypeReference<List<GroupData>>() {
+//        });
+//        var mapper = new XmlMapper();
+//        var value = mapper.readValue(new File("groups.xml"), new TypeReference<List<GroupData>>() {
+//        });
         result.addAll(value);
         return result;
     }

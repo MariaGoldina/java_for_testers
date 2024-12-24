@@ -4,13 +4,20 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import common.CommonFunctions;
+import model.ContactData;
 import model.GroupData;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+
+// Параметры конфигуратора запуска
+//--type contacts --output contacts.json --format json --count 3
+//--type groups --output groups.json --format json --count 3
 
 public class Generator {
     @Parameter(names = {"--type", "-t"})
@@ -58,7 +65,17 @@ public class Generator {
     }
 
     private Object generateContacts() {
-        return null;
+        var result = new ArrayList<ContactData>();
+        for (int i = 0; i < count; i++) {
+            result.add(new ContactData()
+                    .withFirstName(CommonFunctions.randomString(i * 10))
+                    .withLastName(CommonFunctions.randomString(i * 10))
+                    .withMiddleName(CommonFunctions.randomString(i * 10))
+                    .withAddress(CommonFunctions.randomString(i * 10))
+                    .withEmail(CommonFunctions.randomString(i * 10))
+                    .withMobilePhone(CommonFunctions.randomString(i * 10)));
+        }
+        return result;
     }
 
     private void save(Object data) throws IOException {
@@ -70,6 +87,12 @@ public class Generator {
             try (var writer = new FileWriter(output)) {
                 writer.write(json);
             }
+        } else if (format.equals("yaml")) {
+            ObjectMapper mapper = new YAMLMapper();
+            mapper.writeValue(new File(output), data);
+        } else if (format.equals("xml")) {
+            ObjectMapper mapper = new XmlMapper();
+            mapper.writeValue(new File(output), data);
         } else {
             throw new IllegalArgumentException("Неизвестный формат данных" + format);
         }
