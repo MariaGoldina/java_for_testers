@@ -70,17 +70,34 @@ public class GroupCreationTests extends TestBase {
         return result;
     }
 
+    public static List<GroupData> singleGroupProvider() {
+        return List.of(
+                new GroupData()
+                        .withName(CommonFunctions.randomString( 10))
+                        .withHeader(CommonFunctions.randomString( 10))
+                        .withFooter(CommonFunctions.randomString( 10)));
+    }
+
     @ParameterizedTest
-    @MethodSource("groupProvider")
+    @MethodSource("singleGroupProvider")
     public void canCreateGroup(GroupData group) {
-        var oldGroups = app.groups().getList();
+        var oldGroups = app.jdbc().getGroupsDBList();
         app.groups().createGroup(group);
-        var newGroups = app.groups().getList();
+        var newGroups = app.jdbc().getGroupsDBList();
         newGroups.sort(app.groups().compareById);
+        var maxId = newGroups.get(newGroups.size() - 1).id();
         var expectedGroups = new ArrayList<>(oldGroups);
-        expectedGroups.add(group.withId(newGroups.get(newGroups.size() - 1).id()).withHeader("").withFooter(""));
+        expectedGroups.add(group.withId(maxId));
         expectedGroups.sort(app.groups().compareById);
         Assertions.assertEquals(newGroups, expectedGroups);
+
+        var newUIGroups = app.groups().getList();
+        newUIGroups.sort(app.groups().compareById);
+        var expectedGroupsFromDB = new ArrayList<>();
+        for (var newGroup : newGroups) {
+            expectedGroupsFromDB.add(newGroup.withHeader("").withFooter(""));
+        }
+        Assertions.assertEquals(newUIGroups, expectedGroupsFromDB);
     }
 
     @ParameterizedTest
