@@ -16,6 +16,7 @@ public class GroupRemovalTests extends TestBase {
         }
         var oldGroups = app.hbm().getGroupsDBList();
         var index = new Random().nextInt(oldGroups.size());
+        app.groups().reloadGroupsPage();
         app.groups().selectGroup(oldGroups.get(index));
         app.groups().removeGroups();
         var newGroups = app.hbm().getGroupsDBList();
@@ -31,6 +32,7 @@ public class GroupRemovalTests extends TestBase {
             app.hbm().createGroupInDB(new GroupData().withName("group 2"));
         }
         var oldGroups = app.hbm().getGroupsDBList();
+        app.groups().reloadGroupsPage();
         app.groups().selectGroup(oldGroups.get(0));
         app.groups().selectGroup(oldGroups.get(1));
         app.groups().removeGroups();
@@ -46,7 +48,9 @@ public class GroupRemovalTests extends TestBase {
         if (app.hbm().getGroupsDBCount() == 0) {
             app.hbm().createGroupInDB(new GroupData("", "new group", "group header", "group footer"));
         }
+        app.groups().reloadGroupsPage();
         app.groups().removeAllSelectedGroups();
+        Assertions.assertEquals(0, app.hbm().getGroupsDBCount());
         Assertions.assertEquals(0, app.groups().getGroupsCount());
     }
 }

@@ -10,16 +10,17 @@ import java.util.Random;
 public class ContactModificationTests extends TestBase {
     @Test
     void canModifyContact() {
-        if (app.contacts().getContactCount() == 0) {
-            app.contacts().createContact(new ContactData(
+        if (app.hbm().getContactDBCount() == 0) {
+            app.hbm().createContactInDB(new ContactData(
                     "", "firstname", "lastname", "middlename",
                     "address", "email", "mobilephone", ""));
         }
-        var oldContacts = app.contacts().getContactList();
+        var oldContacts = app.hbm().getContactsDBList();
         var index = new Random().nextInt(oldContacts.size());
         var testData = new ContactData().withFirstName("modified firstname").withLastName("modified lastname");
+        app.contacts().reloadHomePage();
         app.contacts().modifyContact(oldContacts.get(index), testData);
-        var newContacts = app.contacts().getContactList();
+        var newContacts = app.hbm().getContactsDBList();
         var expectedContacts = new ArrayList<>(oldContacts);
         expectedContacts.set(index, testData.withId(oldContacts.get(index).id()));
 
@@ -30,12 +31,12 @@ public class ContactModificationTests extends TestBase {
 
     @Test
     void canModifyContactWithAllFields() {
-        if (app.contacts().getContactCount() == 0) {
-            app.contacts().createContact(new ContactData(
+        if (app.hbm().getContactDBCount() == 0) {
+            app.hbm().createContactInDB(new ContactData(
                     "", "firstname", "lastname", "middlename",
                     "address", "email", "mobilephone", ""));
         }
-        var oldContacts = app.contacts().getContactList();
+        var oldContacts = app.hbm().getContactsDBList();
         var index = new Random().nextInt(oldContacts.size());
         var testData = new ContactData()
                 .withFirstName("modified firstname")
@@ -44,15 +45,11 @@ public class ContactModificationTests extends TestBase {
                 .withAddress("modified address")
                 .withEmail("modified email")
                 .withMobilePhone("modified mobilephone");
+        app.contacts().reloadHomePage();
         app.contacts().modifyContact(oldContacts.get(index), testData);
-        var newContacts = app.contacts().getContactList();
+        var newContacts = app.hbm().getContactsDBList();
         var expectedContacts = new ArrayList<>(oldContacts);
-        expectedContacts.set(index, testData
-                .withId(oldContacts.get(index).id())
-                .withMiddleName("")
-                .withAddress("")
-                .withEmail("")
-                .withMobilePhone(""));
+        expectedContacts.set(index, testData.withId(oldContacts.get(index).id()));
 
         newContacts.sort(app.contacts().compareById);
         expectedContacts.sort(app.contacts().compareById);

@@ -23,6 +23,10 @@ public class ContactHelper extends HelperBase {
         }
     }
 
+    public void reloadHomePage() {
+        openPage(By.linkText("home"));
+    }
+
     public void createContact(ContactData contact) {
         initContactCreation();
         if (!contact.photo().isEmpty()) {

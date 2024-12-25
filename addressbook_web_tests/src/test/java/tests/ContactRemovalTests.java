@@ -13,16 +13,17 @@ public class ContactRemovalTests extends TestBase {
 
     @Test
     public void canRemoveContact() {
-        if (app.contacts().getContactCount() == 0) {
-            app.contacts().createContact(new ContactData(
+        if (app.hbm().getContactDBCount() == 0) {
+            app.hbm().createContactInDB(new ContactData(
                     "", "firstname", "lastname", "middlename",
                     "address", "email", "mobilephone", ""));
         }
-        var oldContacts = app.contacts().getContactList();
+        var oldContacts = app.hbm().getContactsDBList();
         var index = new Random().nextInt(oldContacts.size());
+        app.contacts().reloadHomePage();
         app.contacts().selectContact(oldContacts.get(index));
         app.contacts().removeContacts();
-        var newContacts = app.contacts().getContactList();
+        var newContacts = app.hbm().getContactsDBList();
         var expectedContacts = new ArrayList<>(oldContacts);
         expectedContacts.remove(index);
         Assertions.assertEquals(newContacts, expectedContacts);
@@ -30,15 +31,16 @@ public class ContactRemovalTests extends TestBase {
 
     @Test
     public void canRemoveSeveralContacts() {
-        if (app.contacts().getContactCount() < 2) {
-            app.contacts().createContact(new ContactData().withFirstName("1"));
-            app.contacts().createContact(new ContactData().withFirstName("2"));
+        if (app.hbm().getContactDBCount() < 2) {
+            app.hbm().createContactInDB(new ContactData().withFirstName("1"));
+            app.hbm().createContactInDB(new ContactData().withFirstName("2"));
         }
-        var oldContacts = app.contacts().getContactList();
+        var oldContacts = app.hbm().getContactsDBList();
+        app.contacts().reloadHomePage();
         app.contacts().selectContact(oldContacts.get(0));
         app.contacts().selectContact(oldContacts.get(1));
         app.contacts().removeContacts();
-        var newContacts = app.contacts().getContactList();
+        var newContacts = app.hbm().getContactsDBList();
         var expectedContacts = new ArrayList<>(oldContacts);
         expectedContacts.remove(0);
         expectedContacts.remove(0);
@@ -57,11 +59,13 @@ public class ContactRemovalTests extends TestBase {
 
     @Test
     public void canRemoveAllContacts() {
-        if (app.contacts().getContactCount() == 0) {
-            app.contacts().createContact(new ContactData().withFirstName("1"));
+        if (app.hbm().getContactDBCount() == 0) {
+            app.hbm().createContactInDB(new ContactData().withFirstName("1"));
         }
+        app.contacts().reloadHomePage();
         app.contacts().selectCheckbox(By.id("MassCB"));
         app.contacts().removeContacts();
+        Assertions.assertEquals(0, app.hbm().getContactDBCount());
         Assertions.assertEquals(0, app.contacts().getContactCount());
     }
 }

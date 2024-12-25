@@ -98,29 +98,44 @@ public class ContactCreationTests extends TestBase {
         return result;
     }
 
+    public static List<ContactData> singleContactProvider() {
+        return List.of(
+                new ContactData()
+                        .withFirstName(CommonFunctions.randomString(10))
+                        .withLastName(CommonFunctions.randomString(10))
+                        .withMiddleName(CommonFunctions.randomString(10))
+                        .withAddress(CommonFunctions.randomString(10))
+                        .withEmail(CommonFunctions.randomString(5) + "@mail.com")
+                        .withMobilePhone("7" + CommonFunctions.randomStringWithNumbers(1000000000)));
+    }
+
     @ParameterizedTest
     @MethodSource("contactProvider")
     public void canCreateContact(ContactData contact) {
-        var oldContacts = app.contacts().getContactList();
+        var oldContacts = app.hbm().getContactsDBList();
         app.contacts().createContact(contact);
-        var newContacts = app.contacts().getContactList();
+        var newContacts = app.hbm().getContactsDBList();
         newContacts.sort(app.contacts().compareById);
         var expectedContacts = new ArrayList<>(oldContacts);
-        expectedContacts.add(contact.withId(newContacts.get(newContacts.size() - 1).id())
-                .withMiddleName("")
-                .withAddress("")
-                .withEmail("")
-                .withMobilePhone(""));
+        expectedContacts.add(contact.withId(newContacts.get(newContacts.size() - 1).id()));
         expectedContacts.sort(app.contacts().compareById);
         Assertions.assertEquals(newContacts, expectedContacts);
+
+        var newUIContacts = app.contacts().getContactList();
+        newUIContacts.sort(app.contacts().compareById);
+        var expectedContactsFromDB = new ArrayList<>();
+        for (var newContact : newContacts) {
+            expectedContactsFromDB.add(newContact.withMiddleName("").withAddress("").withEmail("").withMobilePhone(""));
+        }
+        Assertions.assertEquals(newUIContacts, expectedContactsFromDB);
     }
 
     @ParameterizedTest
     @MethodSource("negativeContactProvider")
     public void cannotCreateContact(ContactData contact) {
-        var oldContacts = app.contacts().getContactList();
+        var oldContacts = app.hbm().getContactsDBList();
         app.contacts().createContact(contact);
-        var newContacts = app.contacts().getContactList();
+        var newContacts = app.hbm().getContactsDBList();
         Assertions.assertEquals(newContacts, oldContacts);
     }
 
@@ -134,6 +149,9 @@ public class ContactCreationTests extends TestBase {
                 .withEmail("")
                 .withMobilePhone("")
                 .withPhoto(CommonFunctions.randomFile("src/test/resources/images"));
+        var oldContacts = app.hbm().getContactDBCount();
         app.contacts().createContact(contact);
+        var newContacts = app.hbm().getContactDBCount();
+        Assertions.assertEquals(oldContacts + 1, newContacts);
     }
 }

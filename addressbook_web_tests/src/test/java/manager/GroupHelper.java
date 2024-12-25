@@ -23,6 +23,10 @@ public class GroupHelper extends HelperBase {
         }
     }
 
+    public void reloadGroupsPage() {
+        openPage(By.linkText("groups"));
+    }
+
     public void createGroup(GroupData group) {
         openGroupsPage();
         initGroupCreation();
