@@ -11,14 +11,14 @@ public class GroupRemovalTests extends TestBase {
 
     @Test
     public void canRemoveGroup() {
-        if (app.groups().getGroupsCount() == 0) {
-            app.groups().createGroup(new GroupData("", "new group", "group header", "group footer"));
+        if (app.hbm().getGroupsDBCount() == 0) {
+            app.hbm().createGroupInDB(new GroupData("", "new group", "group header", "group footer"));
         }
-        var oldGroups = app.groups().getList();
+        var oldGroups = app.hbm().getGroupsDBList();
         var index = new Random().nextInt(oldGroups.size());
         app.groups().selectGroup(oldGroups.get(index));
         app.groups().removeGroups();
-        var newGroups = app.groups().getList();
+        var newGroups = app.hbm().getGroupsDBList();
         var expectedGroups = new ArrayList<>(oldGroups);
         expectedGroups.remove(index);
         Assertions.assertEquals(newGroups, expectedGroups);
@@ -26,15 +26,15 @@ public class GroupRemovalTests extends TestBase {
 
     @Test
     public void canRemoveSeveralGroups() {
-        if (app.groups().getGroupsCount() < 2) {
-            app.groups().createGroup(new GroupData().withName("group 1"));
-            app.groups().createGroup(new GroupData().withName("group 2"));
+        if (app.hbm().getGroupsDBCount() < 2) {
+            app.hbm().createGroupInDB(new GroupData().withName("group 1"));
+            app.hbm().createGroupInDB(new GroupData().withName("group 2"));
         }
-        var oldGroups = app.groups().getList();
+        var oldGroups = app.hbm().getGroupsDBList();
         app.groups().selectGroup(oldGroups.get(0));
         app.groups().selectGroup(oldGroups.get(1));
         app.groups().removeGroups();
-        var newGroups = app.groups().getList();
+        var newGroups = app.hbm().getGroupsDBList();
         var expectedGroups = new ArrayList<>(oldGroups);
         expectedGroups.remove(0);
         expectedGroups.remove(0);
@@ -43,8 +43,8 @@ public class GroupRemovalTests extends TestBase {
 
     @Test
     public void canRemoveAllSelectedGroups() {
-        if (app.groups().getGroupsCount() == 0) {
-            app.groups().createGroup(new GroupData("", "new group", "group header", "group footer"));
+        if (app.hbm().getGroupsDBCount() == 0) {
+            app.hbm().createGroupInDB(new GroupData("", "new group", "group header", "group footer"));
         }
         app.groups().removeAllSelectedGroups();
         Assertions.assertEquals(0, app.groups().getGroupsCount());

@@ -73,17 +73,17 @@ public class GroupCreationTests extends TestBase {
     public static List<GroupData> singleGroupProvider() {
         return List.of(
                 new GroupData()
-                        .withName(CommonFunctions.randomString( 10))
-                        .withHeader(CommonFunctions.randomString( 10))
-                        .withFooter(CommonFunctions.randomString( 10)));
+                        .withName(CommonFunctions.randomString(10))
+                        .withHeader(CommonFunctions.randomString(10))
+                        .withFooter(CommonFunctions.randomString(10)));
     }
 
     @ParameterizedTest
-    @MethodSource("singleGroupProvider")
+    @MethodSource("groupProvider")
     public void canCreateGroup(GroupData group) {
-        var oldGroups = app.jdbc().getGroupsDBList();
+        var oldGroups = app.hbm().getGroupsDBList();
         app.groups().createGroup(group);
-        var newGroups = app.jdbc().getGroupsDBList();
+        var newGroups = app.hbm().getGroupsDBList();
         newGroups.sort(app.groups().compareById);
         var maxId = newGroups.get(newGroups.size() - 1).id();
         var expectedGroups = new ArrayList<>(oldGroups);
@@ -103,9 +103,9 @@ public class GroupCreationTests extends TestBase {
     @ParameterizedTest
     @MethodSource("negativeGroupProvider")
     public void cannotCreateGroup(GroupData group) {
-        var oldGroups = app.groups().getList();
+        var oldGroups = app.hbm().getGroupsDBList();
         app.groups().createGroup(group);
-        var newGroups = app.groups().getList();
+        var newGroups = app.hbm().getGroupsDBList();
         Assertions.assertEquals(newGroups, oldGroups);
     }
 }
