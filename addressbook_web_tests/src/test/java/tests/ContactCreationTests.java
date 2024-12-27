@@ -110,7 +110,7 @@ public class ContactCreationTests extends TestBase {
     }
 
     @ParameterizedTest
-    @MethodSource("contactProvider")
+    @MethodSource("singleContactProvider")
     public void canCreateContact(ContactData contact) {
         var oldContacts = app.hbm().getContactsDBList();
         app.contacts().createContact(contact);
@@ -153,5 +153,33 @@ public class ContactCreationTests extends TestBase {
         app.contacts().createContact(contact);
         var newContacts = app.hbm().getContactDBCount();
         Assertions.assertEquals(oldContacts + 1, newContacts);
+    }
+
+    @Test
+    public void canCreateContactInGroup() {
+        var contact = new ContactData()
+                .withFirstName("ingroup")
+                .withLastName("contact")
+                .withMiddleName("")
+                .withAddress("")
+                .withEmail("")
+                .withMobilePhone("");
+        if (app.hbm().getGroupsDBCount() == 0) {
+            app.hbm().createGroupInDB(new GroupData("", "new group", "group header", "group footer"));
+        }
+        var group = app.hbm().getGroupsDBList().get(0);
+
+        var oldContacts = app.hbm().getContactDBCount();
+        var oldRelated = app.hbm().getContactsInGroup(group);
+        oldRelated.sort(app.contacts().compareById);
+        app.contacts().createContact(contact, group);
+        var newContacts = app.hbm().getContactDBCount();
+        var newRelated = app.hbm().getContactsInGroup(group);
+        newRelated.sort(app.contacts().compareById);
+        var expectedRelated = new ArrayList<>(oldRelated);
+        expectedRelated.add(contact.withId(newRelated.get(newRelated.size() - 1).id()));
+        expectedRelated.sort(app.contacts().compareById);
+        Assertions.assertEquals(oldContacts + 1, newContacts);
+        Assertions.assertEquals(expectedRelated, newRelated);
     }
 }

@@ -1,7 +1,9 @@
 package manager;
 
 import model.ContactData;
+import model.GroupData;
 import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.Select;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -38,6 +40,22 @@ public class ContactHelper extends HelperBase {
         returnToHomePage();
     }
 
+    public void createContact(ContactData contact, GroupData group) {
+        initContactCreation();
+        if (!contact.photo().isEmpty()) {
+            fillContactFormWithPhoto(contact);
+        } else {
+            fillContactForm(contact);
+        }
+        selectGroup(group);
+        submitContactCreation();
+        returnToHomePage();
+    }
+
+    private void selectGroup(GroupData group) {
+        new Select(manager.driver.findElement(By.name("new_group"))).selectByValue(group.id());
+    }
+
     public void selectContact(ContactData contact) {
         openHomePage();
         click(By.cssSelector(String.format("input[value='%s']", contact.id())));
@@ -61,6 +79,32 @@ public class ContactHelper extends HelperBase {
         fillContactForm(modifiedContact);
         submitContactModification();
         returnToHomePage();
+    }
+
+    public void addContactToGroup(ContactData contact, GroupData group) {
+        openHomePage();
+        selectContact(contact);
+        selectGroupTo(group);
+        click(By.name("add"));
+    }
+
+    public void removeContactFromGroup(ContactData contact) {
+        selectContact(contact);
+        click(By.name("remove"));
+    }
+
+    public void selectAllGroupsFrom() {
+        openHomePage();
+        new Select(manager.driver.findElement(By.name("group"))).selectByVisibleText("[all]");
+    }
+
+    public void selectGroupFrom(GroupData group) {
+        openHomePage();
+        new Select(manager.driver.findElement(By.name("group"))).selectByValue(group.id());
+    }
+
+    private void selectGroupTo(GroupData group) {
+        new Select(manager.driver.findElement(By.name("to_group"))).selectByValue(group.id());
     }
 
     public void closeDeleteAllert() {
