@@ -18,6 +18,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class GroupCreationTests extends TestBase {
 
@@ -70,16 +72,17 @@ public class GroupCreationTests extends TestBase {
         return result;
     }
 
-    public static List<GroupData> singleGroupProvider() {
-        return List.of(
-                new GroupData()
-                        .withName(CommonFunctions.randomString(10))
-                        .withHeader(CommonFunctions.randomString(10))
-                        .withFooter(CommonFunctions.randomString(10)));
+    public static Stream<GroupData> singleGroupProvider() {
+        Supplier<GroupData> randomGroup = () -> new GroupData()
+                .withName(CommonFunctions.randomString(10))
+                .withHeader(CommonFunctions.randomString(10))
+                .withFooter(CommonFunctions.randomString(10));
+        return Stream.generate(randomGroup).limit(1);
+
     }
 
     @ParameterizedTest
-    @MethodSource("groupProvider")
+    @MethodSource("singleGroupProvider")
     public void canCreateGroup(GroupData group) {
         var oldGroups = app.hbm().getGroupsDBList();
         app.groups().createGroup(group);
