@@ -2,8 +2,6 @@ package tests;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import common.CommonFunctions;
 import model.GroupData;
 import org.junit.jupiter.api.Assertions;
@@ -11,14 +9,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GroupCreationTests extends TestBase {
@@ -72,7 +69,7 @@ public class GroupCreationTests extends TestBase {
         return result;
     }
 
-    public static Stream<GroupData> singleGroupProvider() {
+    public static Stream<GroupData> randomGroupProvider() {
         Supplier<GroupData> randomGroup = () -> new GroupData()
                 .withName(CommonFunctions.randomString(10))
                 .withHeader(CommonFunctions.randomString(10))
@@ -82,25 +79,23 @@ public class GroupCreationTests extends TestBase {
     }
 
     @ParameterizedTest
-    @MethodSource("singleGroupProvider")
+    @MethodSource("randomGroupProvider")
     public void canCreateGroup(GroupData group) {
         var oldGroups = app.hbm().getGroupsDBList();
         app.groups().createGroup(group);
         var newGroups = app.hbm().getGroupsDBList();
-        newGroups.sort(app.groups().compareById);
-        var maxId = newGroups.get(newGroups.size() - 1).id();
+        var extraGroups = newGroups.stream().filter(g -> !oldGroups.contains(g)).collect(Collectors.toList());
+        var newId = extraGroups.get(0).id();
         var expectedGroups = new ArrayList<>(oldGroups);
-        expectedGroups.add(group.withId(maxId));
-        expectedGroups.sort(app.groups().compareById);
-        Assertions.assertEquals(newGroups, expectedGroups);
+        expectedGroups.add(group.withId(newId));
+        Assertions.assertEquals(Set.copyOf(newGroups), Set.copyOf(expectedGroups));
 
         var newUIGroups = app.groups().getList();
-        newUIGroups.sort(app.groups().compareById);
         var expectedGroupsFromDB = new ArrayList<>();
         for (var newGroup : newGroups) {
             expectedGroupsFromDB.add(newGroup.withHeader("").withFooter(""));
         }
-        Assertions.assertEquals(newUIGroups, expectedGroupsFromDB);
+        Assertions.assertEquals(Set.copyOf(newUIGroups), Set.copyOf(expectedGroupsFromDB));
     }
 
     @ParameterizedTest
