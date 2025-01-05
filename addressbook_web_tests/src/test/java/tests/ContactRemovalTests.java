@@ -16,7 +16,7 @@ public class ContactRemovalTests extends TestBase {
         if (app.hbm().getContactDBCount() == 0) {
             app.hbm().createContactInDB(new ContactData(
                     "", "firstname", "lastname", "middlename",
-                    "address", "email", "mobilephone", ""));
+                    "address", "email", "", "mobilephone", "", "", "", "", ""));
         }
         var oldContacts = app.hbm().getContactsDBList();
         var index = new Random().nextInt(oldContacts.size());

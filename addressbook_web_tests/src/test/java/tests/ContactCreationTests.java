@@ -1,9 +1,7 @@
 package tests;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import common.CommonFunctions;
 import model.ContactData;
 import model.GroupData;
@@ -12,9 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +20,8 @@ public class ContactCreationTests extends TestBase {
     public static List<ContactData> contactProvider() throws IOException {
         var result = new ArrayList<>(List.of(
                 new ContactData("", CommonFunctions.randomStringWithNumbers(1000), CommonFunctions.randomStringWithNumbers(1000), CommonFunctions.randomStringWithNumbers(1000),
-                        CommonFunctions.randomStringWithNumbers(1000), CommonFunctions.randomStringWithNumbers(1000), CommonFunctions.randomStringWithNumbers(1000),
-                        "")
+                        CommonFunctions.randomStringWithNumbers(1000), CommonFunctions.randomStringWithNumbers(1000), "", CommonFunctions.randomStringWithNumbers(1000),
+                        "", "", "", "", "")
 //                ,
 //                new ContactData("", "firstname" + CommonFunctions.randomStringWithNumbers(1000),
 //                        "lastname" + CommonFunctions.randomStringWithNumbers(1000),
@@ -125,7 +121,16 @@ public class ContactCreationTests extends TestBase {
         newUIContacts.sort(app.contacts().compareById);
         var expectedContactsFromDB = new ArrayList<>();
         for (var newContact : newContacts) {
-            expectedContactsFromDB.add(newContact.withMiddleName("").withAddress("").withEmail("").withMobilePhone(""));
+            expectedContactsFromDB.add(newContact
+                    .withMiddleName("")
+                    .withAddress("")
+                    .withEmail("")
+                    .withEmail2("")
+                    .withEmail3("")
+                    .withMobilePhone("")
+                    .withHomePhone("")
+                    .withWorkPhone("")
+                    .withPhoto(""));
         }
         Assertions.assertEquals(newUIContacts, expectedContactsFromDB);
     }

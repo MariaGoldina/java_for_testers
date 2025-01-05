@@ -38,12 +38,13 @@ public class ContactModificationTests extends TestBase {
         if (app.hbm().getContactDBCount() == 0) {
             app.hbm().createContactInDB(new ContactData(
                     "", "firstname", "lastname", "middlename",
-                    "address", "email", "mobilephone", ""));
+                    "address", "email", "", "mobilephone", "", "", "", "", ""));
         }
         var oldContacts = app.hbm().getContactsDBList();
         var index = new Random().nextInt(oldContacts.size());
         var testData = new ContactData().withFirstName("modified firstname").withLastName("modified lastname");
         app.contacts().reloadHomePage();
+        app.contacts().selectAllGroupsFrom();
         app.contacts().modifyContact(oldContacts.get(index), testData);
         var newContacts = app.hbm().getContactsDBList();
         var expectedContacts = new ArrayList<>(oldContacts);
@@ -59,7 +60,7 @@ public class ContactModificationTests extends TestBase {
         if (app.hbm().getContactDBCount() == 0) {
             app.hbm().createContactInDB(new ContactData(
                     "", "firstname", "lastname", "middlename",
-                    "address", "email", "mobilephone", ""));
+                    "address", "email", "", "mobilephone", "", "", "", "", ""));
         }
         var oldContacts = app.hbm().getContactsDBList();
         var index = new Random().nextInt(oldContacts.size());
@@ -71,6 +72,7 @@ public class ContactModificationTests extends TestBase {
                 .withEmail("modified email")
                 .withMobilePhone("modified mobilephone");
         app.contacts().reloadHomePage();
+        app.contacts().selectAllGroupsFrom();
         app.contacts().modifyContact(oldContacts.get(index), testData);
         var newContacts = app.hbm().getContactsDBList();
         var expectedContacts = new ArrayList<>(oldContacts);
@@ -86,7 +88,7 @@ public class ContactModificationTests extends TestBase {
         if (app.hbm().getContactDBCount() == 0) {
             app.hbm().createContactInDB(new ContactData(
                     "", "firstname", "lastname", "middlename",
-                    "address", "email", "mobilephone", ""));
+                    "address", "email", "", "mobilephone", "", "", "", "", ""));
         }
         if (app.hbm().getGroupsDBCount() == 0) {
             app.hbm().createGroupInDB(new GroupData("", "new group", "group header", "group footer"));
@@ -100,7 +102,7 @@ public class ContactModificationTests extends TestBase {
         if (oldContactsNotInGroup.isEmpty()) {
             app.hbm().createContactInDB(new ContactData(
                     "", "newcontact", "forgroup", "",
-                    "", "", "", ""));
+                    "", "", "", "", "", "", "", "", ""));
             var listContacts = app.hbm().getContactsDBList();
             listContacts.sort(app.contacts().compareById);
             addedContact = listContacts.get(listContacts.size() - 1);
@@ -133,7 +135,7 @@ public class ContactModificationTests extends TestBase {
         if (app.hbm().getContactDBCount() == 0) {
             app.hbm().createContactInDB(new ContactData(
                     "", "firstname", "lastname", "middlename",
-                    "address", "email", "mobilephone", ""));
+                    "address", "email", "", "mobilephone", "", "", "", "", ""));
         }
         if (app.hbm().getGroupsDBCount() == 0) {
             app.hbm().createGroupInDB(new GroupData("", "new group", "group header", "group footer"));

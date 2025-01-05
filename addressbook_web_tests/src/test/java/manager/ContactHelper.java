@@ -3,11 +3,12 @@ package manager;
 import model.ContactData;
 import model.GroupData;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ContactHelper extends HelperBase {
 
@@ -174,5 +175,72 @@ public class ContactHelper extends HelperBase {
             contacts.add(new ContactData().withId(id).withFirstName(firstName).withLastName(lastName));
         }
         return contacts;
+    }
+
+    public String getPhones(ContactData contact) {
+        return manager.driver.findElement(By.xpath(
+                String.format("//input[@id='%s']/../../td[6]", contact.id()))).getText();
+
+    }
+
+    public String getPhonesOnEditPage(ContactData contact) {
+        openHomePage();
+        selectContact(contact);
+        initContactModification(contact);
+        var home = manager.driver.findElement(By.name("home")).getAttribute("value");
+        var mobile = manager.driver.findElement(By.name("mobile")).getAttribute("value");
+        var work = manager.driver.findElement(By.name("work")).getAttribute("value");
+        return Stream.of(home, mobile, work)
+                .filter(s -> s!=null && !s.isEmpty())
+                .collect(Collectors.joining("\n"));
+    }
+
+    public Map<String, String> getAllPhones() {
+        var result = new HashMap<String, String>();
+        List<WebElement> rows = manager.driver.findElements(By.name("entry"));
+        for (WebElement row : rows) {
+            var id = row.findElement(By.tagName("input")).getAttribute("id");
+            var phones = row.findElements(By.tagName("td")).get(5).getText();
+            result.put(id, phones);
+        }
+        return result;
+    }
+
+    public Map<String, String> getInfo(ContactData contact) {
+        var result = new HashMap<String, String>();
+        var address = manager.driver.findElement(By.xpath(
+                String.format("//input[@id='%s']/../../td[4]", contact.id()))).getText();
+        var emails = manager.driver.findElement(By.xpath(
+                String.format("//input[@id='%s']/../../td[5]", contact.id()))).getText();
+        var phones = manager.driver.findElement(By.xpath(
+                String.format("//input[@id='%s']/../../td[6]", contact.id()))).getText();
+        result.put("address", address);
+        result.put("emails", emails);
+        result.put("phones", phones);
+        return result;
+    }
+
+    public HashMap<String, String> getInfoOnEditPage(ContactData contact) {
+        openHomePage();
+        selectContact(contact);
+        initContactModification(contact);
+        var result = new HashMap<String, String>();
+        var address = manager.driver.findElement(By.name("address")).getText();
+        var email = manager.driver.findElement(By.name("email")).getAttribute("value");
+        var email2 = manager.driver.findElement(By.name("email2")).getAttribute("value");;
+        var email3 = manager.driver.findElement(By.name("email3")).getAttribute("value");;
+        var emails = Stream.of(email, email2, email3)
+                .filter(s -> s!=null && !s.isEmpty())
+                .collect(Collectors.joining("\n"));
+        var home = manager.driver.findElement(By.name("home")).getAttribute("value");
+        var mobile = manager.driver.findElement(By.name("mobile")).getAttribute("value");
+        var work = manager.driver.findElement(By.name("work")).getAttribute("value");
+        var phones = Stream.of(home, mobile, work)
+                .filter(s -> s!=null && !s.isEmpty())
+                .collect(Collectors.joining("\n"));
+        result.put("address", address);
+        result.put("emails", emails);
+        result.put("phones", phones);
+        return result;
     }
 }
