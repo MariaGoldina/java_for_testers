@@ -4,6 +4,7 @@ import jakarta.mail.Flags;
 import jakarta.mail.Folder;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
+import org.jetbrains.annotations.NotNull;
 import ru.stqa.mantis.model.MailMessage;
 
 import java.io.IOException;
@@ -11,12 +12,12 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 public class MailHelper extends HelperBase {
     public MailHelper(ApplicationManager manager) {
         super(manager);
     }
-
 
     public List<MailMessage> recieve(String username, String password, Duration duration) {
         var start = System.currentTimeMillis();
@@ -81,5 +82,19 @@ public class MailHelper extends HelperBase {
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @NotNull
+    public String getUrlFromMail(MailMessage message) {
+        var text = message.content();
+        var pattern = Pattern.compile("http://\\S*");
+        var matcher = pattern.matcher(text);
+        var linkUrl = "";
+        if (matcher.find()) {
+            linkUrl = text.substring(matcher.start(), matcher.end());
+        } else {
+            throw new RuntimeException("Link wasn't sent");
+        }
+        return linkUrl;
     }
 }

@@ -1,7 +1,8 @@
-package ru.stqa.mantis.tests;
+package ru.stqa.mantis.tests.helpersTests;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.stqa.mantis.tests.TestBase;
 
 import java.time.Duration;
 import java.util.regex.Pattern;

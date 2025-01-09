@@ -15,10 +15,11 @@ public class ApplicationManager {
     private HttpSessionHelper httpSessionHelper;
     private JamesCliHelper jamesCliHelper;
     private MailHelper mailHelper;
+    private SignupHelper signupHelper;
 
     public void init(String browser, Properties properties) {
         this.browser = browser;
-        this.properties=properties;
+        this.properties = properties;
     }
 
     public WebDriver driver() {
@@ -42,6 +43,13 @@ public class ApplicationManager {
             sessionHelper = new SessionHelper(this);
         }
         return sessionHelper;
+    }
+
+    public SignupHelper signup() {
+        if (signupHelper == null) {
+            signupHelper = new SignupHelper(this);
+        }
+        return signupHelper;
     }
 
     public HttpSessionHelper http() {

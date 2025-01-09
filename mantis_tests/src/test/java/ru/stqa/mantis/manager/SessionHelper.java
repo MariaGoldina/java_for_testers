@@ -8,6 +8,7 @@ public class SessionHelper extends HelperBase {
     }
 
     public void login(String user, String password) {
+        openStartPage();
         typeText(By.name("username"), user);
         click(By.cssSelector("input[type='submit']"));
         typeText(By.name("password"), password);

@@ -2,6 +2,7 @@ package ru.stqa.mantis.manager;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WindowType;
 
 import java.nio.file.Paths;
 
@@ -14,6 +15,22 @@ public class HelperBase {
 
     protected void openPage(By locator) {
         click(locator);
+    }
+
+    public void openStartPage() {
+        if (!isElementPresent(By.cssSelector("a.back-to-login-link"))) {
+            manager.driver().get(String.format("%slogin.php", manager.property("web.baseUrl")));
+        }
+    }
+
+    public void openUrlInNewTab(String url) {
+        manager.driver().switchTo().newWindow(WindowType.TAB);
+        manager.driver().get(url);
+    }
+
+    public void switchToTab(int tabIndex) {
+        Object[] windowHandles = manager.driver().getWindowHandles().toArray();
+        manager.driver().switchTo().window((String) windowHandles[tabIndex]);
     }
 
     public boolean isElementPresent(By locator) {
