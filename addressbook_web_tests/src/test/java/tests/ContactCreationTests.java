@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 @Feature("Contacts")
 public class ContactCreationTests extends TestBase {
@@ -109,9 +111,20 @@ public class ContactCreationTests extends TestBase {
                         .withMobilePhone("7" + CommonFunctions.randomStringWithNumbers(1000000000)));
     }
 
+    public static Stream<ContactData> randomContactProvider() {
+        Supplier<ContactData> randomContact = () -> new ContactData()
+                .withFirstName(CommonFunctions.randomString(10))
+                .withLastName(CommonFunctions.randomString(10))
+                .withMiddleName(CommonFunctions.randomString(10))
+                .withAddress(CommonFunctions.randomString(10))
+                .withEmail(CommonFunctions.randomString(5) + "@mail.com")
+                .withMobilePhone("7" + CommonFunctions.randomStringWithNumbers(1000000000));
+        return Stream.generate(randomContact).limit(3);
+    }
+
     @Story("Create contact")
     @ParameterizedTest
-    @MethodSource("singleContactProvider")
+    @MethodSource("randomContactProvider")
     public void canCreateContact(ContactData contact) {
         Allure.parameter("contact", contact);
         var oldContacts = app.hbm().getContactsDBList();
