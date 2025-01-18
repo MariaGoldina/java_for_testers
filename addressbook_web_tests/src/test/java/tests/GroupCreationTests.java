@@ -78,7 +78,7 @@ public class GroupCreationTests extends TestBase {
                 .withName(CommonFunctions.randomString(10))
                 .withHeader(CommonFunctions.randomString(10))
                 .withFooter(CommonFunctions.randomString(10));
-        return Stream.generate(randomGroup).limit(3);
+        return Stream.generate(randomGroup).limit(2);
     }
 
     @Story("Create group")

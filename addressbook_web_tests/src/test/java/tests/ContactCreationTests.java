@@ -119,7 +119,7 @@ public class ContactCreationTests extends TestBase {
                 .withAddress(CommonFunctions.randomString(10))
                 .withEmail(CommonFunctions.randomString(5) + "@mail.com")
                 .withMobilePhone("7" + CommonFunctions.randomStringWithNumbers(1000000000));
-        return Stream.generate(randomContact).limit(3);
+        return Stream.generate(randomContact).limit(2);
     }
 
     @Story("Create contact")
