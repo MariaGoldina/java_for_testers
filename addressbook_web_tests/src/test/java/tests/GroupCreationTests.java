@@ -3,6 +3,9 @@ package tests;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import common.CommonFunctions;
+import io.qameta.allure.Allure;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import model.GroupData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,6 +21,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Feature("Groups")
 public class GroupCreationTests extends TestBase {
 
     public static List<GroupData> groupProvider() throws IOException {
@@ -78,32 +82,42 @@ public class GroupCreationTests extends TestBase {
 
     }
 
+    @Story("Create group")
     @ParameterizedTest
     @MethodSource("randomGroupProvider")
     public void canCreateGroup(GroupData group) {
+        Allure.parameter("group", group);
         var oldGroups = app.hbm().getGroupsDBList();
         app.groups().createGroup(group);
         var newGroups = app.hbm().getGroupsDBList();
-        var extraGroups = newGroups.stream().filter(g -> !oldGroups.contains(g)).collect(Collectors.toList());
-        var newId = extraGroups.get(0).id();
-        var expectedGroups = new ArrayList<>(oldGroups);
-        expectedGroups.add(group.withId(newId));
-        Assertions.assertEquals(Set.copyOf(newGroups), Set.copyOf(expectedGroups));
+        Allure.step("Validating results from DB", step -> {
+            var extraGroups = newGroups.stream().filter(g -> !oldGroups.contains(g)).collect(Collectors.toList());
+            var newId = extraGroups.get(0).id();
+            var expectedGroups = new ArrayList<>(oldGroups);
+            expectedGroups.add(group.withId(newId));
+            Assertions.assertEquals(Set.copyOf(newGroups), Set.copyOf(expectedGroups));
+        });
 
-        var newUIGroups = app.groups().getList();
-        var expectedGroupsFromDB = new ArrayList<>();
-        for (var newGroup : newGroups) {
-            expectedGroupsFromDB.add(newGroup.withHeader("").withFooter(""));
-        }
-        Assertions.assertEquals(Set.copyOf(newUIGroups), Set.copyOf(expectedGroupsFromDB));
+        Allure.step("Validating results from UI", step -> {
+            var newUIGroups = app.groups().getList();
+            var expectedGroupsFromDB = new ArrayList<>();
+            for (var newGroup : newGroups) {
+                expectedGroupsFromDB.add(newGroup.withHeader("").withFooter(""));
+            }
+            Assertions.assertEquals(Set.copyOf(newUIGroups), Set.copyOf(expectedGroupsFromDB));
+        });
     }
 
+    @Story("Can not create uncorrect group, negative")
     @ParameterizedTest
     @MethodSource("negativeGroupProvider")
     public void cannotCreateGroup(GroupData group) {
+        Allure.parameter("uncorrect group", group);
         var oldGroups = app.hbm().getGroupsDBList();
         app.groups().createGroup(group);
         var newGroups = app.hbm().getGroupsDBList();
-        Assertions.assertEquals(newGroups, oldGroups);
+        Allure.step("Validating results", step -> {
+            Assertions.assertEquals(newGroups, oldGroups);
+        });
     }
 }

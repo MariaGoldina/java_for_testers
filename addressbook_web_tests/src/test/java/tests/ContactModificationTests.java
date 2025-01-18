@@ -1,5 +1,8 @@
 package tests;
 
+import io.qameta.allure.Allure;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import model.ContactData;
 import model.GroupData;
 import org.junit.jupiter.api.Assertions;
@@ -9,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@Feature("Contacts")
 public class ContactModificationTests extends TestBase {
     private List<ContactData> contactsNotInGroup(List<ContactData> list, GroupData group) {
         var newContactsList = new ArrayList<>(list);
@@ -33,13 +37,16 @@ public class ContactModificationTests extends TestBase {
         }
     }
 
+    @Story("Modify general contact fields")
     @Test
     void canModifyContact() {
-        if (app.hbm().getContactDBCount() == 0) {
-            app.hbm().createContactInDB(new ContactData(
-                    "", "firstname", "lastname", "middlename",
-                    "address", "email", "", "mobilephone", "", "", "", "", ""));
-        }
+        Allure.step("Creating preconditions", step -> {
+                    if (app.hbm().getContactDBCount() == 0) {
+                        app.hbm().createContactInDB(new ContactData(
+                                "", "firstname", "lastname", "middlename",
+                                "address", "email", "", "mobilephone", "", "", "", "", ""));
+                    }
+                });
         var oldContacts = app.hbm().getContactsDBList();
         var index = new Random().nextInt(oldContacts.size());
         var testData = new ContactData().withFirstName("modified firstname").withLastName("modified lastname");
@@ -47,55 +54,64 @@ public class ContactModificationTests extends TestBase {
         app.contacts().selectAllGroupsFrom();
         app.contacts().modifyContact(oldContacts.get(index), testData);
         var newContacts = app.hbm().getContactsDBList();
-        var expectedContacts = new ArrayList<>(oldContacts);
-        expectedContacts.set(index, testData.withId(oldContacts.get(index).id()));
+        Allure.step("Validating results", step -> {
+            var expectedContacts = new ArrayList<>(oldContacts);
+            expectedContacts.set(index, testData.withId(oldContacts.get(index).id()));
 
-        newContacts.sort(app.contacts().compareById);
-        expectedContacts.sort(app.contacts().compareById);
-        Assertions.assertEquals(newContacts, expectedContacts);
+            newContacts.sort(app.contacts().compareById);
+            expectedContacts.sort(app.contacts().compareById);
+            Assertions.assertEquals(newContacts, expectedContacts);
+        });
     }
 
+    @Story("Modify all contact fields")
     @Test
     void canModifyContactWithAllFields() {
-        if (app.hbm().getContactDBCount() == 0) {
-            app.hbm().createContactInDB(new ContactData(
-                    "", "firstname", "lastname", "middlename",
-                    "address", "email", "", "mobilephone", "", "", "", "", ""));
-        }
+        Allure.step("Creating preconditions", step -> {
+                    if (app.hbm().getContactDBCount() == 0) {
+                        app.hbm().createContactInDB(new ContactData(
+                                "", "firstname", "lastname", "middlename",
+                                "address", "email", "", "mobilephone", "", "", "", "", ""));
+                    }
+                });
         var oldContacts = app.hbm().getContactsDBList();
         var index = new Random().nextInt(oldContacts.size());
         var testData = new ContactData()
                 .withFirstName("modified firstname")
                 .withLastName("modified lastname")
                 .withMiddleName("modified middlename")
-                .withAddress("modified address")
-                .withEmail("modified email")
-                .withMobilePhone("modified mobilephone");
+                .withAddress("modified_address")
+                .withEmail("modified_email")
+                .withMobilePhone("modified_mobilephone");
         app.contacts().reloadHomePage();
         app.contacts().selectAllGroupsFrom();
         app.contacts().modifyContact(oldContacts.get(index), testData);
         var newContacts = app.hbm().getContactsDBList();
-        var expectedContacts = new ArrayList<>(oldContacts);
-        expectedContacts.set(index, testData.withId(oldContacts.get(index).id()));
-
-        newContacts.sort(app.contacts().compareById);
-        expectedContacts.sort(app.contacts().compareById);
-        Assertions.assertEquals(newContacts, expectedContacts);
+        Allure.step("Validating results", step -> {
+            var expectedContacts = new ArrayList<>(oldContacts);
+            expectedContacts.set(index, testData.withId(oldContacts.get(index).id()));
+            newContacts.sort(app.contacts().compareById);
+            expectedContacts.sort(app.contacts().compareById);
+            Assertions.assertEquals(newContacts, expectedContacts);
+        });
     }
 
+    @Story("Add contact to group")
     @Test
     public void canAddContactToGroup() {
-        if (app.hbm().getContactDBCount() == 0) {
-            app.hbm().createContactInDB(new ContactData(
-                    "", "firstname", "lastname", "middlename",
-                    "address", "email", "", "mobilephone", "", "", "", "", ""));
-        }
-        if (app.hbm().getGroupsDBCount() == 0) {
-            app.hbm().createGroupInDB(new GroupData("", "new group", "group header", "group footer"));
-        }
+        Allure.step("Creating preconditions", step -> {
+                    if (app.hbm().getContactDBCount() == 0) {
+                        app.hbm().createContactInDB(new ContactData(
+                                "", "firstname", "lastname", "middlename",
+                                "address", "email", "", "mobilephone", "", "", "", "", ""));
+                    }
+                    if (app.hbm().getGroupsDBCount() == 0) {
+                        app.hbm().createGroupInDB(new GroupData("", "new group", "group header", "group footer"));
+                    }
+                });
         var group = app.hbm().getGroupsDBList().get(0);
-        ContactData addedContact;
 
+        ContactData addedContact;
         var oldContacts = app.hbm().getContactsDBList();
         var oldContactsNotInGroup = contactsNotInGroup(oldContacts, group);
 
@@ -110,7 +126,7 @@ public class ContactModificationTests extends TestBase {
             var index = new Random().nextInt(oldContactsNotInGroup.size());
             addedContact = oldContactsNotInGroup.get(index);
         }
-
+        Allure.step("Added contact prepared");
         oldContacts = app.hbm().getContactsDBList();
         oldContacts.sort(app.contacts().compareById);
         var oldRelated = app.hbm().getContactsInGroup(group);
@@ -122,29 +138,34 @@ public class ContactModificationTests extends TestBase {
         newContacts.sort(app.contacts().compareById);
         var newRelated = app.hbm().getContactsInGroup(group);
         newRelated.sort(app.contacts().compareById);
+
         var expectedRelated = new ArrayList<>(oldRelated);
         expectedRelated.add(addedContact);
         expectedRelated.sort(app.contacts().compareById);
-
+        Allure.step("Validating results");
         Assertions.assertEquals(oldContacts, newContacts);
         Assertions.assertEquals(expectedRelated, newRelated);
     }
 
+    @Story("Remove contact from group")
     @Test
     public void canRemoveContactFromGroup() {
-        if (app.hbm().getContactDBCount() == 0) {
-            app.hbm().createContactInDB(new ContactData(
-                    "", "firstname", "lastname", "middlename",
-                    "address", "email", "", "mobilephone", "", "", "", "", ""));
-        }
-        if (app.hbm().getGroupsDBCount() == 0) {
-            app.hbm().createGroupInDB(new GroupData("", "new group", "group header", "group footer"));
-        }
+        Allure.step("Creating preconditions", step -> {
+                    if (app.hbm().getContactDBCount() == 0) {
+                        app.hbm().createContactInDB(new ContactData(
+                                "", "firstname", "lastname", "middlename",
+                                "address", "email", "", "mobilephone", "", "", "", "", ""));
+                    }
+                    if (app.hbm().getGroupsDBCount() == 0) {
+                        app.hbm().createGroupInDB(new GroupData("", "new group", "group header", "group footer"));
+                    }
+                });
         var group = app.hbm().getGroupsDBList().get(0);
 
         var oldContacts = app.hbm().getContactsDBList();
         oldContacts.sort(app.contacts().compareById);
         checkNotEmptyGroup(group);
+        Allure.step("Contact in group prepared");
         var oldRelated = app.hbm().getContactsInGroup(group);
         oldRelated.sort(app.contacts().compareById);
         var index = new Random().nextInt(oldRelated.size());
@@ -158,7 +179,7 @@ public class ContactModificationTests extends TestBase {
         var expectedRelated = new ArrayList<>(oldRelated);
         expectedRelated.remove(oldRelated.get(index));
         expectedRelated.sort(app.contacts().compareById);
-
+        Allure.step("Validating results");
         Assertions.assertEquals(oldContacts, newContacts);
         Assertions.assertEquals(expectedRelated, newRelated);
     }

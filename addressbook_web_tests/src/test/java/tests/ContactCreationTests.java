@@ -3,6 +3,9 @@ package tests;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import common.CommonFunctions;
+import io.qameta.allure.Allure;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import model.ContactData;
 import model.GroupData;
 import org.junit.jupiter.api.Assertions;
@@ -15,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Feature("Contacts")
 public class ContactCreationTests extends TestBase {
 
     public static List<ContactData> contactProvider() throws IOException {
@@ -105,45 +109,56 @@ public class ContactCreationTests extends TestBase {
                         .withMobilePhone("7" + CommonFunctions.randomStringWithNumbers(1000000000)));
     }
 
+    @Story("Create contact")
     @ParameterizedTest
     @MethodSource("singleContactProvider")
     public void canCreateContact(ContactData contact) {
+        Allure.parameter("contact", contact);
         var oldContacts = app.hbm().getContactsDBList();
         app.contacts().createContact(contact);
         var newContacts = app.hbm().getContactsDBList();
         newContacts.sort(app.contacts().compareById);
-        var expectedContacts = new ArrayList<>(oldContacts);
-        expectedContacts.add(contact.withId(newContacts.get(newContacts.size() - 1).id()));
-        expectedContacts.sort(app.contacts().compareById);
-        Assertions.assertEquals(newContacts, expectedContacts);
+        Allure.step("Validating results in DB", step -> {
+                    var expectedContacts = new ArrayList<>(oldContacts);
+                    expectedContacts.add(contact.withId(newContacts.get(newContacts.size() - 1).id()));
+                    expectedContacts.sort(app.contacts().compareById);
+                    Assertions.assertEquals(newContacts, expectedContacts);
+                });
 
-        var newUIContacts = app.contacts().getContactList();
-        newUIContacts.sort(app.contacts().compareById);
-        var expectedContactsFromDB = new ArrayList<>();
-        for (var newContact : newContacts) {
-            expectedContactsFromDB.add(newContact
-                    .withMiddleName("")
-                    .withAddress("")
-                    .withEmail("")
-                    .withEmail2("")
-                    .withEmail3("")
-                    .withMobilePhone("")
-                    .withHomePhone("")
-                    .withWorkPhone("")
-                    .withPhoto(""));
-        }
-        Assertions.assertEquals(newUIContacts, expectedContactsFromDB);
+        Allure.step("Validating results in UI", step -> {
+            var newUIContacts = app.contacts().getContactList();
+            newUIContacts.sort(app.contacts().compareById);
+            var expectedContactsFromDB = new ArrayList<>();
+            for (var newContact : newContacts) {
+                expectedContactsFromDB.add(newContact
+                        .withMiddleName("")
+                        .withAddress("")
+                        .withEmail("")
+                        .withEmail2("")
+                        .withEmail3("")
+                        .withMobilePhone("")
+                        .withHomePhone("")
+                        .withWorkPhone("")
+                        .withPhoto(""));
+            }
+            Assertions.assertEquals(newUIContacts, expectedContactsFromDB);
+        });
     }
 
+    @Story("Can not create uncorrect contact, negative")
     @ParameterizedTest
     @MethodSource("negativeContactProvider")
     public void cannotCreateContact(ContactData contact) {
+        Allure.parameter("uncorrect contact", contact);
         var oldContacts = app.hbm().getContactsDBList();
         app.contacts().createContact(contact);
         var newContacts = app.hbm().getContactsDBList();
-        Assertions.assertEquals(newContacts, oldContacts);
+        Allure.step("Validating results", step -> {
+            Assertions.assertEquals(newContacts, oldContacts);
+        });
     }
 
+    @Story("Create contact with photo")
     @Test
     public void canCreateContactWithPhoto() {
         var contact = new ContactData()
@@ -157,9 +172,12 @@ public class ContactCreationTests extends TestBase {
         var oldContacts = app.hbm().getContactDBCount();
         app.contacts().createContact(contact);
         var newContacts = app.hbm().getContactDBCount();
-        Assertions.assertEquals(oldContacts + 1, newContacts);
+        Allure.step("Validating results", step -> {
+            Assertions.assertEquals(oldContacts + 1, newContacts);
+        });
     }
 
+    @Story("Create contact in group")
     @Test
     public void canCreateContactInGroup() {
         var contact = new ContactData()
@@ -169,9 +187,11 @@ public class ContactCreationTests extends TestBase {
                 .withAddress("")
                 .withEmail("")
                 .withMobilePhone("");
-        if (app.hbm().getGroupsDBCount() == 0) {
-            app.hbm().createGroupInDB(new GroupData("", "new group", "group header", "group footer"));
-        }
+        Allure.step("Creating preconditions", step -> {
+                    if (app.hbm().getGroupsDBCount() == 0) {
+                        app.hbm().createGroupInDB(new GroupData("", "new group", "group header", "group footer"));
+                    }
+                });
         var group = app.hbm().getGroupsDBList().get(0);
 
         var oldContacts = app.hbm().getContactDBCount();
@@ -181,10 +201,12 @@ public class ContactCreationTests extends TestBase {
         var newContacts = app.hbm().getContactDBCount();
         var newRelated = app.hbm().getContactsInGroup(group);
         newRelated.sort(app.contacts().compareById);
-        var expectedRelated = new ArrayList<>(oldRelated);
-        expectedRelated.add(contact.withId(newRelated.get(newRelated.size() - 1).id()));
-        expectedRelated.sort(app.contacts().compareById);
-        Assertions.assertEquals(oldContacts + 1, newContacts);
-        Assertions.assertEquals(expectedRelated, newRelated);
+        Allure.step("Validating results", step -> {
+            var expectedRelated = new ArrayList<>(oldRelated);
+            expectedRelated.add(contact.withId(newRelated.get(newRelated.size() - 1).id()));
+            expectedRelated.sort(app.contacts().compareById);
+            Assertions.assertEquals(oldContacts + 1, newContacts);
+            Assertions.assertEquals(expectedRelated, newRelated);
+        });
     }
 }

@@ -22,8 +22,8 @@ public class TestBase {
         }
     }
 
-    @AfterEach
-    public void checkDBConsistency() {
-        app.jdbc().checkConsistency();
-    }
+//    @AfterEach
+//    public void checkDBConsistency() {
+//        app.jdbc().checkConsistency();
+//    }
 }

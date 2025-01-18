@@ -1,5 +1,6 @@
 package manager;
 
+import io.qameta.allure.Step;
 import model.ContactData;
 import model.GroupData;
 import org.openqa.selenium.By;
@@ -30,6 +31,7 @@ public class ContactHelper extends HelperBase {
         openPage(By.linkText("home"));
     }
 
+    @Step
     public void createContact(ContactData contact) {
         initContactCreation();
         if (!contact.photo().isEmpty()) {
@@ -67,12 +69,14 @@ public class ContactHelper extends HelperBase {
         click(locator);
     }
 
+    @Step
     public void removeContacts() {
         openHomePage();
         initContactRemove();
         openHomePage();
     }
 
+    @Step
     public void modifyContact(ContactData contact, ContactData modifiedContact) {
         openHomePage();
         selectContact(contact);
@@ -82,6 +86,7 @@ public class ContactHelper extends HelperBase {
         returnToHomePage();
     }
 
+    @Step
     public void addContactToGroup(ContactData contact, GroupData group) {
         openHomePage();
         selectContact(contact);
@@ -89,6 +94,7 @@ public class ContactHelper extends HelperBase {
         click(By.name("add"));
     }
 
+    @Step
     public void removeContactFromGroup(ContactData contact) {
         selectContact(contact);
         click(By.name("remove"));
@@ -177,12 +183,14 @@ public class ContactHelper extends HelperBase {
         return contacts;
     }
 
+    @Step
     public String getPhones(ContactData contact) {
         return manager.driver.findElement(By.xpath(
                 String.format("//input[@id='%s']/../../td[6]", contact.id()))).getText();
 
     }
 
+    @Step
     public String getPhonesOnEditPage(ContactData contact) {
         openHomePage();
         selectContact(contact);
@@ -195,6 +203,7 @@ public class ContactHelper extends HelperBase {
                 .collect(Collectors.joining("\n"));
     }
 
+    @Step
     public Map<String, String> getAllPhones() {
         var result = new HashMap<String, String>();
         List<WebElement> rows = manager.driver.findElements(By.name("entry"));
@@ -206,6 +215,7 @@ public class ContactHelper extends HelperBase {
         return result;
     }
 
+    @Step
     public Map<String, String> getInfo(ContactData contact) {
         var result = new HashMap<String, String>();
         var address = manager.driver.findElement(By.xpath(
@@ -220,6 +230,7 @@ public class ContactHelper extends HelperBase {
         return result;
     }
 
+    @Step
     public HashMap<String, String> getInfoOnEditPage(ContactData contact) {
         openHomePage();
         selectContact(contact);
