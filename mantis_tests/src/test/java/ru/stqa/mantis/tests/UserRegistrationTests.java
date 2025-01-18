@@ -40,4 +40,21 @@ public class UserRegistrationTests extends TestBase {
         app.http().login(user.username(), user.password());
         Assertions.assertTrue(app.http().isLoggedIn());
     }
+
+    @ParameterizedTest
+    @MethodSource("randomUserProvider")
+    public void canRegisterUserFromAdmin(UserData user) {
+        app.jamesApi().addUser(user.email(), user.password());
+
+        app.rest().createUser(user);
+
+        var messages = app.mail().recieve(user.email(), user.password(), Duration.ofSeconds(10));
+
+        var linkUrl = app.mail().getUrlFromMail(messages.get(0));
+
+        app.signup().confirmRegistrationFromLink(linkUrl, user);
+
+        app.http().login(user.username(), user.password());
+        Assertions.assertTrue(app.http().isLoggedIn());
+    }
 }
