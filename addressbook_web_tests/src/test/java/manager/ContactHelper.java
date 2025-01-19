@@ -43,6 +43,7 @@ public class ContactHelper extends HelperBase {
         returnToHomePage();
     }
 
+    @Step
     public void createContact(ContactData contact, GroupData group) {
         initContactCreation();
         if (!contact.photo().isEmpty()) {

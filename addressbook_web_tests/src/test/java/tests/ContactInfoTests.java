@@ -140,9 +140,12 @@ public class ContactInfoTests extends TestBase {
         app.contacts().reloadHomePage();
         var contactInfo = app.contacts().getInfo(contact);
         var contactInfoOnEditPage = app.contacts().getInfoOnEditPage(contact);
-        Allure.step("Validating results", step -> {
-            var expectedInfo = getContactInfo(contact);
-            Assertions.assertEquals(expectedInfo, contactInfo);
+
+        var expectedInfo = getContactInfo(contact);
+        Allure.step("Validating results from home page", step -> {
+                    Assertions.assertEquals(expectedInfo, contactInfo);
+                });
+        Allure.step("Validating results from edit page", step -> {
             Assertions.assertEquals(expectedInfo, contactInfoOnEditPage);
             Assertions.assertEquals(contactInfo, contactInfoOnEditPage);
         });
